@@ -1,0 +1,17 @@
+{
+  "tags": {
+    "visible": true,
+    "height": 50
+  },
+  "header": {
+    "height": 60
+  },
+  "naiveThemeOverrides": {
+    "common": {
+      "primaryColor": "#4788E9FF",
+      "primaryColorHover": "#4788E9E3",
+      "primaryColorPressed": "#5386d2FF",
+      "primaryColorSuppl": "#4788E963"
+    }
+  }
+}
