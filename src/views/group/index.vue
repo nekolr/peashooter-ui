@@ -117,6 +117,9 @@
                 <n-form-item label="偏移量" path="offset">
                   <n-input-number v-model:value="item.offset" placeholder="请输入偏移量" />
                 </n-form-item>
+                <n-form-item label="剧集偏移量" path="episodeOffset">
+                  <n-input-number v-model:value="item.episodeOffset" placeholder="请输入剧集偏移量" />
+                </n-form-item>
                 <n-form-item label="季度" path="season">
                   <n-input-number v-model:value="item.season" placeholder="请输入季度" />
                 </n-form-item>
@@ -218,6 +221,7 @@ const saveGroupModel = ref({
   matchers: [
     {
       regexp: '',
+      episodeOffset: 0,
       offset: 0,
       season: 1,
     },
@@ -506,6 +510,7 @@ function resetSaveGroupModel() {
     matchers: [
       {
         regexp: '',
+        episodeOffset: 0,
         offset: 0,
         season: 1,
       },
@@ -582,6 +587,7 @@ function handleSelectDropdownOption(key) {
     } else {
       let matcher = {
         regexp: escapedTitle,
+        episodeOffset: 0,
         offset: 0,
         season: 1,
       }
@@ -623,6 +629,7 @@ function handleAddEmptyMatcher(e) {
   e.preventDefault()
   let matcher = {
     regexp: '',
+    episodeOffset: 0,
     offset: 0,
     season: 1,
   }
