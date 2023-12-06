@@ -14,6 +14,14 @@ export function refreshSeriesList() {
   })
 }
 
+export function syncSeriesLatest() {
+  return request({
+    url: '/api/sonarr/sync-series-latest',
+    method: 'get',
+    timeout: 360000
+  })
+}
+
 export function setupAllGroupIndexer() {
   return request({
     url: '/api/sonarr/setupAllGroupIndexer',

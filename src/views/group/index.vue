@@ -2,15 +2,8 @@
   <div p-5>
     <n-card>
       <div ml-10>
-        <n-form
-          ref="searchFormRef"
-          inline
-          :model="searchModel"
-          label-placement="left"
-          label-width="auto"
-          :show-feedback="false"
-          require-mark-placement="right-hanging"
-          :size="size">
+        <n-form ref="searchFormRef" inline :model="searchModel" label-placement="left" label-width="auto"
+          :show-feedback="false" require-mark-placement="right-hanging" :size="size">
           <n-form-item label="分组名称">
             <n-input v-model:value="searchModel.groupName" placeholder="请输入分组名称" clearable />
           </n-form-item>
@@ -28,53 +21,28 @@
           <n-button type="primary" @click="handleAddGroupClick"> 新增 </n-button>
         </n-space>
       </div>
-      <n-data-table
-        mt-10
-        remote
-        :size="size"
-        :loading="groupDataTableLoading"
-        :scroll-x="1600"
-        :data="groupTableData"
-        :columns="groupColumns"
-        :pagination="groupPagination"
-        :row-key="(row) => row.id"
-        striped />
+      <n-data-table mt-10 remote :size="size" :loading="groupDataTableLoading" :scroll-x="1600" :data="groupTableData"
+        :columns="groupColumns" :pagination="groupPagination" :row-key="(row) => row.id" striped />
     </n-card>
     <n-modal v-model:show="showModal" :auto-focus="false" style="width: 1920px" :mask-closable="false">
       <n-card p-20 :title="modalTitle" :bordered="false" size="medium" segmented role="dialog" aria-modal="true">
         <n-grid x-gap="60" :cols="5">
           <n-gi span="2">
-            <n-form
-              ref="saveGroupFormRef"
-              :model="saveGroupModel"
-              :rules="saveGroupRules"
-              label-placement="left"
-              label-width="auto"
-              require-mark-placement="right-hanging"
-              :size="size">
+            <n-form ref="saveGroupFormRef" :model="saveGroupModel" :rules="saveGroupRules" label-placement="left"
+              label-width="auto" require-mark-placement="right-hanging" :size="size">
               <n-form-item style="display: none">
                 <n-input-number v-model:value="saveGroupModel.id" :show-button="false" />
               </n-form-item>
               <n-form-item label="选择剧集" path="referenceId">
-                <n-select
-                  v-model:value="saveGroupModel.referenceId"
-                  label-field="name"
-                  filterable
-                  clearable
-                  value-field="seriesId"
-                  :options="seriesOptions"
-                  @update:value="handleSeriesOptionChange" />
-                <n-button :loading="refreshSeriesLoading" @click="handleRefreshSeries"> 刷新 </n-button>
+                <n-select v-model:value="saveGroupModel.referenceId" label-field="titleZhCN" filterable clearable
+                  value-field="seriesId" :options="seriesOptions" @update:value="handleSeriesOptionChange" />
+                &nbsp;
+                <n-button :loading="refreshSeriesLoading" @click="handleRefreshSeries"> 刷新 </n-button>&nbsp;
+                <n-button :loading="syncSeriesLatestLoading" @click="handleSyncSeriesLatest"> 重同步 </n-button>
               </n-form-item>
               <n-form-item label="选择数据源" path="dataSourceIds">
-                <n-select
-                  v-model:value="saveGroupModel.dataSourceIds"
-                  label-field="name"
-                  multiple
-                  filterable
-                  clearable
-                  value-field="id"
-                  :options="dataSourceOptions" />
+                <n-select v-model:value="saveGroupModel.dataSourceIds" label-field="name" multiple filterable clearable
+                  value-field="id" :options="dataSourceOptions" />
               </n-form-item>
               <n-form-item label="分组名称" path="name">
                 <n-input v-model:value="saveGroupModel.name" clearable placeholder="请输入名称" />
@@ -85,23 +53,13 @@
               <n-form-item label="质量" path="quality">
                 <n-input v-model:value="saveGroupModel.quality" clearable placeholder="请输入质量" />
               </n-form-item>
-              <n-card
-                v-for="(item, index) in saveGroupModel.matchers"
-                :key="index"
-                :title="`匹配器${index + 1}`"
-                closable
+              <n-card v-for="(item, index) in saveGroupModel.matchers" :key="index" :title="`匹配器${index + 1}`" closable
                 @close="handleDeleteMatcher(index)">
                 <n-form-item label="正则表达式" path="regexp" :show-feedback="false">
-                  <n-input
-                    ref="regexpInput"
-                    v-model:value="item.regexp"
-                    type="textarea"
-                    :autosize="{
-                      minRows: 1,
-                      maxRows: 2,
-                    }"
-                    clearable
-                    placeholder="请输入正则表达式" />
+                  <n-input ref="regexpInput" v-model:value="item.regexp" type="textarea" :autosize="{
+                    minRows: 1,
+                    maxRows: 2,
+                  }" clearable placeholder="请输入正则表达式" />
                 </n-form-item>
                 <div style="display: flex; justify-content: flex-end">
                   <n-button-group size="small">
@@ -134,34 +92,15 @@
           <n-gi span="3">
             <n-form label-placement="left" label-width="auto" require-mark-placement="right-hanging" :size="size">
               <n-form-item label="查看数据源">
-                <n-select
-                  label-field="name"
-                  filterable
-                  clearable
-                  value-field="id"
-                  :options="dataSourceOptions"
+                <n-select label-field="name" filterable clearable value-field="id" :options="dataSourceOptions"
                   @update:value="handleDataSourceOptionChange" />
               </n-form-item>
             </n-form>
-            <n-data-table
-              mt-10
-              :size="size"
-              :loading="dataSourceTableLoading"
-              :scroll-x="800"
-              :data="dataSourceTableData"
-              :columns="dataSourceTableColumns"
-              :row-props="rowProps"
-              :pagination="dataSourcePagination"
+            <n-data-table mt-10 :size="size" :loading="dataSourceTableLoading" :scroll-x="800" :data="dataSourceTableData"
+              :columns="dataSourceTableColumns" :row-props="rowProps" :pagination="dataSourcePagination"
               :row-key="(row) => row.id" />
-            <n-dropdown
-              placement="bottom-start"
-              trigger="manual"
-              :x="x"
-              :y="y"
-              :options="dropdownOptions"
-              :show="showDropdown"
-              :on-clickoutside="onClickOutside"
-              @select="handleSelectDropdownOption" />
+            <n-dropdown placement="bottom-start" trigger="manual" :x="x" :y="y" :options="dropdownOptions"
+              :show="showDropdown" :on-clickoutside="onClickOutside" @select="handleSelectDropdownOption" />
           </n-gi>
         </n-grid>
         <template #footer>
@@ -176,11 +115,7 @@
     </n-modal>
     <n-modal v-model:show="showMatchResultModal" preset="card" style="width: 1200px">
       <n-card :bordered="false" size="medium" aria-modal="true">
-        <n-data-table
-          :size="size"
-          :scroll-x="800"
-          :data="matchResultTableData"
-          :columns="matchResultColumns"
+        <n-data-table :size="size" :scroll-x="800" :data="matchResultTableData" :columns="matchResultColumns"
           :row-key="(row) => row.id" />
       </n-card>
     </n-modal>
@@ -194,12 +129,13 @@ import { getGroupList, saveGroup, getGroup, deleteGroup, refreshRss } from '@/ap
 import { escape } from '@/utils/regex'
 import { isWhitespace } from '@/utils/is'
 import { getAllDataSource, getItemTitles, testRegexp } from '@/api/datasource'
-import { getSeriesList, refreshSeriesList, setupAllGroupIndexer } from '@/api/sonarr'
+import { getSeriesList, refreshSeriesList, syncSeriesLatest, setupAllGroupIndexer } from '@/api/sonarr'
 
 const size = ref('medium')
 const showModal = ref(false)
 const saveGroupLoading = ref(false)
 const refreshSeriesLoading = ref(false)
+const syncSeriesLatest100Loading = ref(false)
 const dataSourceTableLoading = ref(false)
 const modalTitle = ref('')
 const saveGroupFormRef = ref()
@@ -541,6 +477,30 @@ async function handleRefreshSeries(e) {
     $message.error(error.message)
   }
   refreshSeriesLoading.value = false
+}
+
+async function handleSyncSeriesLatest(e) {
+  e.preventDefault()
+
+  $dialog.confirm({
+    content: '确定要重同步吗？',
+    title: '重同步剧集',
+    confirm() {
+      return new Promise((resolve, reject) => {
+        resolve()
+        syncSeriesLatestLoading.value = true
+        syncSeriesLatest().then((res) => {
+          if (res.success) {
+            $message.success('同步成功')
+          } else {
+            $message.warning(res.msg)
+            reject()
+          }
+          syncSeriesLatestLoading.value = false
+        })
+      })
+    },
+  })
 }
 
 const dataSourceTableData = ref([])
