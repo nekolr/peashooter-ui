@@ -649,7 +649,7 @@ async function handleTestMatchResult(e) {
     let data = {
       matcher: saveGroupModel.value.matchers[index],
       dataSourceIds: saveGroupModel.value.dataSourceIds,
-      series: currentSeries.value.originalName,
+      series: currentSeries.value.titleEn,
       quality: saveGroupModel.value.quality,
       language: saveGroupModel.value.language,
     }
