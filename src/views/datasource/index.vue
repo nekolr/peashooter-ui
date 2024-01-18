@@ -378,5 +378,6 @@ function resetSearchModel() {
     pageNo: 1,
     pageSize: 10,
   }
+  pagination.page = 1
 }
 </script>

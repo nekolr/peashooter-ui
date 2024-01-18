@@ -460,6 +460,7 @@ function resetSearchModel() {
     pageNo: 1,
     pageSize: 10,
   }
+  groupPagination.page = 1
 }
 
 async function handleRefreshSeries(e) {
