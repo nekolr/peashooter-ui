@@ -95,6 +95,11 @@
                 <n-select label-field="name" filterable clearable value-field="id" :options="dataSourceOptions"
                   @update:value="handleDataSourceOptionChange" />
               </n-form-item>
+              <n-form-item label="搜索剧集">
+                <n-input v-model:value="searchTitleFromDataSourceModel.title" placeholder="请输入剧集名称" clearable />&nbsp;
+                <n-button type="primary" @click="handleSearchTitleFromDataSource"> 查询 </n-button>&nbsp;
+                <n-button @click="handleResetSearchTitleFromDataSource"> 重置 </n-button>
+              </n-form-item>
             </n-form>
             <n-data-table mt-10 :size="size" :loading="dataSourceTableLoading" :scroll-x="800" :data="dataSourceTableData"
               :columns="dataSourceTableColumns" :row-props="rowProps" :pagination="dataSourcePagination"
@@ -127,7 +132,7 @@ import { h, ref } from 'vue'
 import { NButton } from 'naive-ui'
 import { getGroupList, saveGroup, getGroup, deleteGroup, refreshRss } from '@/api/group'
 import { escape } from '@/utils/regex'
-import { isWhitespace } from '@/utils/is'
+import { isNullOrUndef, isWhitespace } from '@/utils/is'
 import { getAllDataSource, getItemTitles, testRegexp } from '@/api/datasource'
 import { getSeriesList, refreshSeriesList, syncSeriesLatest, setupAllGroupIndexer } from '@/api/sonarr'
 
@@ -246,6 +251,11 @@ async function initGroupTableData() {
 
 const seriesOptions = ref([])
 const dataSourceOptions = ref([])
+
+const searchTitleFromDataSourceModel = ref({
+  id: null,
+  title: ''
+})
 
 async function initSeriesOptions() {
   try {
@@ -415,6 +425,39 @@ function handleSaveGroup(e) {
       saveGroupLoading.value = false
     }
   })
+}
+
+async function handleSearchTitleFromDataSource() {
+  const id = dataSourceOptions.value[0].id
+  if (!id) {
+    $message.warning('请选择数据源')
+    return
+  }
+  searchTitleFromDataSourceModel.value.id = id
+  console.log(searchTitleFromDataSourceModel.value)
+  dataSourceTableLoading.value = true
+  try {
+    const res = await getItemTitles(searchTitleFromDataSourceModel.value)
+    if (res.success) {
+      dataSourceTableData.value = res.data
+    }
+  } catch (error) {
+    $message.error(error.message)
+  }
+  dataSourceTableLoading.value = false
+}
+
+async function handleResetSearchTitleFromDataSource() {
+  const id = dataSourceOptions.value[0].id
+  if (!id) {
+    $message.warning('请选择数据源')
+    return
+  }
+  searchTitleFromDataSourceModel.value = {
+    id: id,
+    title: ''
+  }
+  await handleSearchTitleFromDataSource()
 }
 
 async function handleSearchButtonClick(e) {
