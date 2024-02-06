@@ -434,7 +434,6 @@ async function handleSearchTitleFromDataSource() {
     return
   }
   searchTitleFromDataSourceModel.value.id = id
-  console.log(searchTitleFromDataSourceModel.value)
   dataSourceTableLoading.value = true
   try {
     const res = await getItemTitles(searchTitleFromDataSourceModel.value)
