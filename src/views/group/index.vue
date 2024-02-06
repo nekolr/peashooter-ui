@@ -95,8 +95,8 @@
                 <n-select label-field="name" filterable clearable value-field="id" :options="dataSourceOptions"
                   @update:value="handleDataSourceOptionChange" />
               </n-form-item>
-              <n-form-item label="搜索剧集">
-                <n-input v-model:value="searchTitleFromDataSourceModel.title" placeholder="请输入剧集名称" clearable />&nbsp;
+              <n-form-item label="搜索标题">
+                <n-input v-model:value="searchTitleFromDataSourceModel.title" placeholder="请输入标题名称" clearable />&nbsp;
                 <n-button type="primary" @click="handleSearchTitleFromDataSource"> 查询 </n-button>&nbsp;
                 <n-button @click="handleResetSearchTitleFromDataSource"> 重置 </n-button>
               </n-form-item>
