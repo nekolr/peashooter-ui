@@ -428,12 +428,11 @@ function handleSaveGroup(e) {
 }
 
 async function handleSearchTitleFromDataSource() {
-  const id = dataSourceOptions.value[0].id
+  const id = searchTitleFromDataSourceModel.value.id
   if (!id) {
     $message.warning('请选择数据源')
     return
   }
-  searchTitleFromDataSourceModel.value.id = id
   dataSourceTableLoading.value = true
   try {
     const res = await getItemTitles(searchTitleFromDataSourceModel.value)
@@ -447,15 +446,12 @@ async function handleSearchTitleFromDataSource() {
 }
 
 async function handleResetSearchTitleFromDataSource() {
-  const id = dataSourceOptions.value[0].id
+  const id = searchTitleFromDataSourceModel.value.id
   if (!id) {
     $message.warning('请选择数据源')
     return
   }
-  searchTitleFromDataSourceModel.value = {
-    id: id,
-    title: ''
-  }
+  searchTitleFromDataSourceModel.value.title = ''
   await handleSearchTitleFromDataSource()
 }
 
@@ -556,6 +552,7 @@ async function handleDataSourceOptionChange(value, option) {
       if (res.success) {
         dataSourceTableData.value = res.data
       }
+      searchTitleFromDataSourceModel.value.id = value
     } catch (error) {
       $message.error(error.message)
     }
