@@ -240,8 +240,8 @@ async function initGroupTableData() {
     const res = await getGroupList(searchModel.value)
     if (res.success) {
       groupTableData.value = res.data.content
-      groupPagination.pageCount = res.data.totalPages
-      groupPagination.itemCount = res.data.totalElements
+      groupPagination.pageCount = res.data.page.totalPages
+      groupPagination.itemCount = res.data.page.totalElements
     }
   } catch (error) {
     $message.error(error.message)

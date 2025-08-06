@@ -168,8 +168,8 @@ async function initTableData() {
     const res = await getDataSourceList(searchModel.value)
     if (res.success) {
       tableData.value = res.data.content
-      pagination.pageCount = res.data.totalPages
-      pagination.itemCount = res.data.totalElements
+      pagination.pageCount = res.data.page.totalPages
+      pagination.itemCount = res.data.page.totalElements
     }
   } catch (error) {
     $message.error(error.message)
