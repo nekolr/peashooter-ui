@@ -92,7 +92,7 @@ export const basicRoutes = [
   },
 ]
 
-const modules = import.meta.globEager('./modules/*.js')
+const modules = import.meta.glob('./modules/*.js', { eager: true })
 const asyncRoutes = []
 Object.keys(modules).forEach((key) => {
   asyncRoutes.push(...modules[key].default)
