@@ -304,7 +304,7 @@ async function handleEditGroup(row) {
 async function handleDeleteGroup(row) {
   if (row && row.id) {
     $dialog.confirm({
-      content: '确定要删除吗？',
+      content: `确定要删除《${row.name}》吗？`,
       title: '删除分组',
       confirm() {
         return new Promise((resolve, reject) => {
