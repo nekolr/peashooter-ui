@@ -38,7 +38,7 @@
                   value-field="seriesId" :options="seriesOptions" @update:value="handleSeriesOptionChange" />
                 &nbsp;
                 <n-button :loading="refreshSeriesLoading" @click="handleRefreshSeries"> 刷新 </n-button>&nbsp;
-                <n-button :loading="syncSeriesLatestLoading" @click="handleSyncSeriesLatest"> 重同步 </n-button>
+                <n-button :loading="syncSeriesNameListLoading" @click="handleSyncSeriesNameList"> 重同步 </n-button>
               </n-form-item>
               <n-form-item label="选择数据源" path="dataSourceIds">
                 <n-select v-model:value="saveGroupModel.dataSourceIds" label-field="name" multiple filterable clearable
@@ -133,14 +133,14 @@ import { NButton } from 'naive-ui'
 import { getGroupList, saveGroup, getGroup, deleteGroup, refreshRss } from '@/api/group'
 import { escape } from '@/utils/regex'
 import { isNullOrUndef, isWhitespace } from '@/utils/is'
-import { getAllDataSource, getItemTitles, testRegexp } from '@/api/datasource'
-import { getSeriesList, refreshSeriesList, syncSeriesLatest, setupAllGroupIndexer } from '@/api/sonarr'
+import { getAllDataSource, getItemTitleList, testRegexp } from '@/api/datasource'
+import { getSeriesNameList, refreshSeriesNameList, syncSeriesNameList, setupAllGroupIndexer } from '@/api/sonarr'
 
 const size = ref('medium')
 const showModal = ref(false)
 const saveGroupLoading = ref(false)
 const refreshSeriesLoading = ref(false)
-const syncSeriesLatestLoading = ref(false)
+const syncSeriesNameListLoading = ref(false)
 const dataSourceTableLoading = ref(false)
 const modalTitle = ref('')
 const saveGroupFormRef = ref()
@@ -259,7 +259,7 @@ const searchTitleFromDataSourceModel = ref({
 
 async function initSeriesOptions() {
   try {
-    const res = await getSeriesList()
+    const res = await getSeriesNameList()
     if (res.success) {
       seriesOptions.value = res.data
     }
@@ -435,7 +435,7 @@ async function handleSearchTitleFromDataSource() {
   }
   dataSourceTableLoading.value = true
   try {
-    const res = await getItemTitles(searchTitleFromDataSourceModel.value)
+    const res = await getItemTitleList(searchTitleFromDataSourceModel.value)
     if (res.success) {
       dataSourceTableData.value = res.data
     }
@@ -505,7 +505,7 @@ async function handleRefreshSeries(e) {
   e.preventDefault()
   refreshSeriesLoading.value = true
   try {
-    const res = await refreshSeriesList()
+    const res = await refreshSeriesNameList()
     if (res.success) {
       seriesOptions.value = res.data
       $message.success('刷新成功')
@@ -518,7 +518,7 @@ async function handleRefreshSeries(e) {
   refreshSeriesLoading.value = false
 }
 
-async function handleSyncSeriesLatest(e) {
+async function handleSyncSeriesNameList(e) {
   e.preventDefault()
 
   $dialog.confirm({
@@ -527,15 +527,15 @@ async function handleSyncSeriesLatest(e) {
     confirm() {
       return new Promise((resolve, reject) => {
         resolve()
-        syncSeriesLatestLoading.value = true
-        syncSeriesLatest().then((res) => {
+        syncSeriesNameListLoading.value = true
+        syncSeriesNameList().then((res) => {
           if (res.success) {
             $message.success('同步成功')
           } else {
             $message.warning(res.msg)
             reject()
           }
-          syncSeriesLatestLoading.value = false
+          syncSeriesNameListLoading.value = false
         })
       })
     },
@@ -548,7 +548,7 @@ async function handleDataSourceOptionChange(value, option) {
   if (value && option) {
     dataSourceTableLoading.value = true
     try {
-      const res = await getItemTitles({ id: value })
+      const res = await getItemTitleList({ id: value })
       if (res.success) {
         dataSourceTableData.value = res.data
       }
@@ -665,10 +665,10 @@ function replaceStr(str, start, end, newStr) {
 }
 
 const matchResultColumns = ref([
-  { title: '序号', key: 'id', width: 60 },
-  { title: '集数', key: 'episode', width: 60 },
+  { title: '序号', key: 'serialNo', width: 60 },
+  { title: '集数', key: 'episodeNum', width: 60 },
   { title: '原标题', key: 'originTitle' },
-  { title: '新标题', key: 'title' },
+  { title: '新标题', key: 'newTitle' },
 ])
 
 const showMatchResultModal = ref(false)
@@ -689,7 +689,7 @@ async function handleTestMatchResult(e) {
     let data = {
       matcher: saveGroupModel.value.matchers[index],
       dataSourceIds: saveGroupModel.value.dataSourceIds,
-      series: currentSeries.value.titleEn,
+      seriesTitle: currentSeries.value.titleEn,
       quality: saveGroupModel.value.quality,
       language: saveGroupModel.value.language,
     }

@@ -47,9 +47,9 @@ export function refreshRss(params = {}) {
   })
 }
 
-export function getItemTitles(params = {}) {
+export function getItemTitleList(params = {}) {
   return request({
-    url: '/api/dataSource/getItemTitles',
+    url: '/api/dataSource/getItemTitleList',
     method: 'get',
     params,
   })

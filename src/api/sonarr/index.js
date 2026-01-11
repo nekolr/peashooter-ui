@@ -1,22 +1,22 @@
 import { defAxios as request } from '@/utils/http'
 
-export function getSeriesList() {
+export function getSeriesNameList() {
   return request({
-    url: '/api/sonarr/series',
+    url: '/api/sonarr/seriesNameList',
     method: 'get',
   })
 }
 
-export function refreshSeriesList() {
+export function refreshSeriesNameList() {
   return request({
-    url: '/api/sonarr/refresh-series',
+    url: '/api/sonarr/refreshSeriesNameList',
     method: 'get',
   })
 }
 
-export function syncSeriesLatest() {
+export function syncSeriesNameList() {
   return request({
-    url: '/api/sonarr/sync-series-latest',
+    url: '/api/sonarr/syncSeriesNameList',
     method: 'get',
     timeout: 360000
   })
