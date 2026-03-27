@@ -55,32 +55,34 @@
               </n-form-item>
               <n-card v-for="(item, index) in saveGroupModel.matchers" :key="index" :title="`匹配器${index + 1}`" closable
                 @close="handleDeleteMatcher(index)">
-                <n-form-item label="正则表达式" path="regexp" :show-feedback="false">
-                  <n-input ref="regexpInput" v-model:value="item.regexp" type="textarea" :autosize="{
-                    minRows: 1,
-                    maxRows: 2,
-                  }" clearable placeholder="请输入正则表达式" />
-                </n-form-item>
-                <div style="display: flex; justify-content: flex-end">
-                  <n-button-group size="small">
-                    <n-button secondary type="info" :data-index="`${index}`" @click="handleReplaceSelectedText">
-                      替换选择文本为集数
-                    </n-button>
-                    <n-button secondary type="default" :data-index="`${index}`" @click="handleTestMatchResult">
-                      测试匹配效果
-                    </n-button>
-                  </n-button-group>
-                </div>
+                <n-form label-placement="left" label-width="100px" :size="size">
+                  <n-form-item label="正则表达式" path="regexp" :show-feedback="false">
+                    <n-input ref="regexpInput" v-model:value="item.regexp" type="textarea" :autosize="{
+                      minRows: 1,
+                      maxRows: 2,
+                    }" clearable placeholder="请输入正则表达式" />
+                  </n-form-item>
+                  <div style="display: flex; justify-content: flex-end">
+                    <n-button-group size="small">
+                      <n-button secondary type="info" :data-index="`${index}`" @click="handleReplaceSelectedText">
+                        替换选择文本为集数
+                      </n-button>
+                      <n-button secondary type="default" :data-index="`${index}`" @click="handleTestMatchResult">
+                        测试匹配效果
+                      </n-button>
+                    </n-button-group>
+                  </div>
 
-                <n-form-item label="偏移量" path="offset">
-                  <n-input-number v-model:value="item.offset" placeholder="请输入偏移量" />
-                </n-form-item>
-                <n-form-item label="剧集偏移量" path="episodeOffset">
-                  <n-input-number v-model:value="item.episodeOffset" placeholder="请输入剧集偏移量" />
-                </n-form-item>
-                <n-form-item label="季度" path="season">
-                  <n-input-number v-model:value="item.season" placeholder="请输入季度" />
-                </n-form-item>
+                  <n-form-item label="偏移量" path="offset">
+                    <n-input-number v-model:value="item.offset" placeholder="请输入偏移量" />
+                  </n-form-item>
+                  <n-form-item label="剧集偏移量" path="episodeOffset">
+                    <n-input-number v-model:value="item.episodeOffset" placeholder="请输入剧集偏移量" />
+                  </n-form-item>
+                  <n-form-item label="季度" path="season">
+                    <n-input-number v-model:value="item.season" placeholder="请输入季度" />
+                  </n-form-item>
+                </n-form>
               </n-card>
             </n-form>
             <div mt-10 style="display: flex; justify-content: flex-end">
