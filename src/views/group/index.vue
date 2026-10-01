@@ -18,6 +18,9 @@
           <n-button type="warning" :loading="setupAllGroupIndexerLoading" @click="handleSetupAllGroupIndexer">
             发布所有分组的 RSS 索引
           </n-button>
+          <n-button type="success" :loading="setupTorznabIndexerLoading" @click="handleSetupTorznabIndexer">
+            发布 Torznab 索引器
+          </n-button>
           <n-button type="primary" @click="handleAddGroupClick"> 新增 </n-button>
         </n-space>
       </div>
@@ -136,7 +139,7 @@ import { getGroupList, saveGroup, getGroup, deleteGroup, refreshRss } from '@/ap
 import { escape } from '@/utils/regex'
 import { isNullOrUndef, isWhitespace } from '@/utils/is'
 import { getAllDataSource, getItemTitleList, testRegexp } from '@/api/datasource'
-import { getSeriesNameList, refreshSeriesNameList, syncSeriesNameList, setupAllGroupIndexer } from '@/api/sonarr'
+import { getSeriesNameList, refreshSeriesNameList, syncSeriesNameList, setupAllGroupIndexer, setupTorznabIndexer } from '@/api/sonarr'
 
 const size = ref('medium')
 const showModal = ref(false)
@@ -726,5 +729,23 @@ async function handleSetupAllGroupIndexer(e) {
     $message.error(error.message)
   }
   setupAllGroupIndexerLoading.value = false
+}
+
+const setupTorznabIndexerLoading = ref(false)
+async function handleSetupTorznabIndexer(e) {
+  e.preventDefault()
+  setupTorznabIndexerLoading.value = true
+  try {
+    const res = await setupTorznabIndexer()
+    if (res.success && res.data) {
+      $message.success('发布成功，请到 Sonarr 索引器列表查看 Test 结果')
+    } else {
+      // 失败时后端返回 success=false 且 msg 为 Sonarr 的错误原因
+      $message.warning(res.success === false && res.msg ? res.msg : '发布失败')
+    }
+  } catch (error) {
+    $message.error(error.message)
+  }
+  setupTorznabIndexerLoading.value = false
 }
 </script>

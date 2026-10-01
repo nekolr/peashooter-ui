@@ -28,3 +28,10 @@ export function setupAllGroupIndexer() {
     method: 'post',
   })
 }
+
+export function setupTorznabIndexer() {
+  return request({
+    url: '/api/sonarr/setupTorznabIndexer',
+    method: 'post',
+  })
+}
