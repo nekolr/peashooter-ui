@@ -36,7 +36,7 @@ export function repResolve(response) {
 
 export function repReject(error) {
   let code = error.response?.status
-  let { message } = error.response?.msg || {}
+  let message = error.response?.data?.msg || error.response?.data?.message
   if (isNullOrUndef(code)) {
     // 未知错误
     code = 500
@@ -47,7 +47,7 @@ export function repReject(error) {
         message = message || '请求参数错误'
         break
       case 401:
-        message = message || '登录已过期'
+        message = !message || message === 'unauthorized' ? '登录已过期' : message
         removeToken()
         toLogin()
         break
