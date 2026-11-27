@@ -32,7 +32,7 @@ watch(
       }
     }
   },
-  { immediate: true }
+  { immediate: true },
 )
 
 // 挂载 naive 组件的方法至 window, 以便在全局使用

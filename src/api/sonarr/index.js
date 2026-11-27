@@ -18,7 +18,7 @@ export function syncSeriesNameList() {
   return request({
     url: '/api/sonarr/syncSeriesNameList',
     method: 'get',
-    timeout: 360000
+    timeout: 360000,
   })
 }
 

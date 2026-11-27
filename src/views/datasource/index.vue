@@ -289,7 +289,7 @@ function initColumns() {
               style: 'margin-left: 15px;',
               onClick: () => handleEdit(row),
             },
-            { default: () => '修改' }
+            { default: () => '修改' },
           ),
           h(
             NButton,
@@ -300,7 +300,7 @@ function initColumns() {
               style: 'margin-left: 15px;',
               onClick: () => handleDelete(row),
             },
-            { default: () => '删除' }
+            { default: () => '删除' },
           ),
           h(
             NButton,
@@ -313,7 +313,7 @@ function initColumns() {
             },
             {
               default: () => '刷新',
-            }
+            },
           ),
         ]
       },

@@ -19,11 +19,13 @@
     :y="contextMenuOption.y" />
 </template>
 
-<script setup name="Tags">
+<script setup>
 import ContextMenu from './ContextMenu.vue'
 import { useTagsStore } from '@/store/modules/tags'
 import { useThemeStore } from '@/store/modules/theme'
 import ScrollX from '@/components/common/ScrollX.vue'
+
+defineOptions({ name: 'Tags' })
 
 const route = useRoute()
 const router = useRouter()
@@ -44,7 +46,7 @@ watch(
     const title = route.meta?.title
     tagsStore.addTag({ name, path, title })
   },
-  { immediate: true }
+  { immediate: true },
 )
 
 const handleTagClick = (path) => {
