@@ -61,9 +61,8 @@ async function handleLogin() {
       setToken(res.data.token)
       userStore.setUserInfo({ username: res.data.user.username })
       if (query.redirect) {
-        const path = query.redirect
-        Reflect.deleteProperty(query, 'redirect')
-        router.push({ path, query })
+        const { redirect, ...restQuery } = query
+        router.push({ path: redirect, query: restQuery })
       } else {
         router.push('/')
       }

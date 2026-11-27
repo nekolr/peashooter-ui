@@ -27,7 +27,7 @@
       <n-data-table mt-10 remote :size="size" :loading="groupDataTableLoading" :scroll-x="1600" :data="groupTableData"
         :columns="groupColumns" :pagination="groupPagination" :row-key="(row) => row.id" striped />
     </n-card>
-    <n-modal v-model:show="showModal" :auto-focus="false" style="width: 1920px" :mask-closable="false">
+    <n-modal v-model:show="showModal" :auto-focus="false" style="width: 90vw; max-width: 1600px" :mask-closable="false">
       <n-card p-20 :title="modalTitle" :bordered="false" size="medium" segmented role="dialog" aria-modal="true">
         <n-grid x-gap="60" :cols="5">
           <n-gi span="2">
@@ -67,10 +67,10 @@
                   </n-form-item>
                   <div style="display: flex; justify-content: flex-end">
                     <n-button-group size="small">
-                      <n-button secondary type="info" :data-index="`${index}`" @click="handleReplaceSelectedText">
+                      <n-button secondary type="info" @click="handleReplaceSelectedText(index)">
                         替换选择文本为集数
                       </n-button>
-                      <n-button secondary type="default" :data-index="`${index}`" @click="handleTestMatchResult">
+                      <n-button secondary type="default" @click="handleTestMatchResult(index)">
                         测试匹配效果
                       </n-button>
                     </n-button-group>
@@ -181,6 +181,7 @@ const saveGroupRules = ref({
   },
   dataSourceIds: {
     required: true,
+    type: 'array',
     message: '请选择数据源',
   },
   name: {
@@ -313,16 +314,21 @@ async function handleDeleteGroup(row) {
       title: '删除分组',
       confirm() {
         return new Promise((resolve, reject) => {
-          deleteGroup({ id: row.id }).then((res) => {
-            if (res.success) {
-              $message.success('删除成功')
-              resolve(true)
-              initGroupTableData()
-            } else {
-              $message.warning(res.msg)
-              reject()
-            }
-          })
+          deleteGroup({ id: row.id })
+            .then((res) => {
+              if (res.success) {
+                $message.success('删除成功')
+                resolve(true)
+                initGroupTableData()
+              } else {
+                $message.warning(res.msg)
+                reject()
+              }
+            })
+            .catch((error) => {
+              $message.error(error.message)
+              reject(error)
+            })
         })
       },
     })
@@ -405,6 +411,10 @@ const dataSourceTableColumns = ref([
 
 function handleAddGroupClick(e) {
   e.preventDefault()
+  resetSaveGroupModel()
+  currentSeries.value = {}
+  dataSourceTableData.value = []
+  searchTitleFromDataSourceModel.value = { id: null, title: '' }
   modalTitle.value = '添加分组'
   showModal.value = true
 }
@@ -530,19 +540,21 @@ async function handleSyncSeriesNameList(e) {
     content: '确定要重同步吗？',
     title: '重同步剧集',
     confirm() {
-      return new Promise((resolve, reject) => {
-        resolve()
-        syncSeriesNameListLoading.value = true
-        syncSeriesNameList().then((res) => {
+      syncSeriesNameListLoading.value = true
+      syncSeriesNameList()
+        .then((res) => {
           if (res.success) {
             $message.success('同步成功')
           } else {
-            $message.warning(res.msg)
-            reject()
+            $message.warning(res.msg || '同步失败')
           }
+        })
+        .catch((error) => {
+          $message.error(error.message)
+        })
+        .finally(() => {
           syncSeriesNameListLoading.value = false
         })
-      })
     },
   })
 }
@@ -643,19 +655,12 @@ function handleAddEmptyMatcher(e) {
 
 const regexpInput = ref()
 
-function handleReplaceSelectedText(e) {
-  let target = e.target,
-    index
-  if (target.tagName === 'SPAN') {
-    index = target.parentNode.dataset.index
-  } else if (target.tagName === 'BUTTON') {
-    index = target.dataset.index
-  }
+function handleReplaceSelectedText(index) {
   nextTick(() => {
-    let textareaEl = regexpInput.value[index].textareaElRef
+    let textareaEl = regexpInput.value?.[index]?.textareaElRef
     let start = textareaEl?.selectionStart
     let end = textareaEl?.selectionEnd
-    if (start == end) {
+    if (start == null || end == null || start == end) {
       $message.warning('请选择正则表达式内的集数')
     } else {
       let matcher = saveGroupModel.value.matchers[index]
@@ -679,16 +684,10 @@ const matchResultColumns = ref([
 const showMatchResultModal = ref(false)
 const matchResultTableData = ref([])
 
-async function handleTestMatchResult(e) {
-  let target = e.target
-  let index
-  if (target.tagName === 'SPAN') {
-    index = target.parentNode.dataset.index
-  } else if (target.tagName === 'BUTTON') {
-    index = target.dataset.index
-  }
-  if (index) {
-    showMatchResultModal.value = true
+async function handleTestMatchResult(index) {
+  if (!currentSeries.value?.titleEn) {
+    $message.warning('请先选择剧集')
+    return
   }
   try {
     let data = {
@@ -701,8 +700,9 @@ async function handleTestMatchResult(e) {
     const res = await testRegexp(data)
     if (res.success) {
       matchResultTableData.value = res.data
+      showMatchResultModal.value = true
     } else {
-      $message.warning('测试失败')
+      $message.warning(res.msg || '测试失败')
     }
   } catch (error) {
     $message.error(error.message)
@@ -711,7 +711,7 @@ async function handleTestMatchResult(e) {
 
 const currentSeries = ref({})
 function handleSeriesOptionChange(value, option) {
-  currentSeries.value = option
+  currentSeries.value = option || {}
 }
 
 const setupAllGroupIndexerLoading = ref(false)

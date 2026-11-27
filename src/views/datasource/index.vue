@@ -198,16 +198,21 @@ async function handleDelete(row) {
       title: '删除数据源',
       confirm() {
         return new Promise((resolve, reject) => {
-          deleteDataSource({ id: row.id }).then((res) => {
-            if (res.success) {
-              $message.success('删除成功')
-              resolve(true)
-              initTableData()
-            } else {
-              $message.warning(res.msg)
-              reject()
-            }
-          })
+          deleteDataSource({ id: row.id })
+            .then((res) => {
+              if (res.success) {
+                $message.success('删除成功')
+                resolve(true)
+                initTableData()
+              } else {
+                $message.warning(res.msg)
+                reject()
+              }
+            })
+            .catch((error) => {
+              $message.error(error.message)
+              reject(error)
+            })
         })
       },
     })
@@ -318,6 +323,7 @@ function initColumns() {
 
 function handleAddDataSourceClick(e) {
   e.preventDefault()
+  resetSaveDataSourceModel()
   modalTitle.value = '添加数据源'
   showModal.value = true
 }
@@ -368,7 +374,7 @@ function resetSaveDataSourceModel() {
     name: '',
     sourceUrl: '',
     useProxy: true,
-    refreshSeconds: 300,
+    refreshSeconds: 600,
   }
 }
 
